@@ -8,15 +8,24 @@ import postrouter from "./routes/PostRoutes.js";
 import commentRouter from "./routes/CommentRoutes.js";
 dotenv.config()
 
+import { rateLimit } from 'express-rate-limit'
+
 const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true, limit: "100mb" }))
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }))
 
-// app.use("/", (req, res) => {
-//     res.send("Welcome to the AI world")
-// })
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    message: {
+        status: 429,
+        message: "Too many requests from this IP, please try again after 15 minutes"
+    }
+});
 
 /** -- Database connection -- **/
 const DB_URL = process.env.MONGODB_URL
@@ -32,6 +41,8 @@ async function connectDB() {
 connectDB()
 
 /**** Routes *****/
+
+app.use(limiter)
 
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/post", postrouter)
