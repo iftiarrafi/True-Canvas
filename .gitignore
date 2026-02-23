@@ -1,0 +1,46 @@
+# Node dependencies
+backend/node_modules
+frontend/node_modules
+
+# Python virtual environment
+ai_image_checker/venv
+ai_image_checker/fine_tuned_vit_20k.pth
+
+# Python cache
+ai_image_checker/__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build output
+frontend/dist
+frontend/build
+backend/dist
+backend/build
+
+# Local env files
+**/.env
+**/.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# IDE/editor folders
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# optional: large model files if not needed in git
+# ai_image_checker/model.pth

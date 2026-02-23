@@ -1,0 +1,87 @@
+
+
+
+export const createpost = async (req, res) => {
+    try {
+
+        const userId = req.user._id
+
+
+        const user = await userModel.findById(userId)
+
+
+        if (!user) {
+            return res.status(400).json({ message: "You are not authenticated" })
+        }
+        const { title } = req.body
+        if (!title) {
+            return res.status(400).json({ message: "Must provide a title" })
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ message: "Must provide an image" })
+        }
+        /** AI detection **/
+        // Create form data correctly
+        const form = new FormData();
+        form.append('file', fs.createReadStream(req.file.path), {
+            filename: req.file.originalname,
+            contentType: req.file.mimetype
+        });
+
+        // Get headers manually if getHeaders doesn't exist
+        const headers = {
+            ...form.getHeaders ? form.getHeaders() : { 'Content-Type': 'multipart/form-data' },
+            'Content-Length': form.getLengthSync()
+        };
+
+        let aiCheckResponse;
+        try {
+            aiCheckResponse = await axios.post('http://localhost:5000/check_image', form, {
+                headers: headers,
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
+                timeout: 10000
+            });
+        } catch (error) {
+            console.error("AI detection service error:", error);
+            fs.unlinkSync(req.file.path);
+            return res.status(500).json({
+                message: "Error verifying image authenticity",
+                error: error.message
+            });
+        }
+        //Proceed with Cloudinary upload if image is real
+        /** AI detection **/
+
+
+
+        const { path } = req.file
+
+        const uploadedFile = await cloudinary.uploader.upload(path)
+        if (!uploadedFile) {
+            return res.status(400).json({ message: "Cannot get file from cloudinary." })
+        }
+        fs.unlinkSync(path)
+
+        //console.log(uploadedFile);
+
+        const newPost = await postModel({
+            title,
+            image_url: uploadedFile?.secure_url,
+            cloudinary_id: uploadedFile?.public_id,
+            author: user?.username,
+            author_id: user?._id
+        })
+
+        await newPost.save()
+        await user.posts.push(newPost)
+        await user.save()
+
+        return res.status(201).json({ message: "post created successfully!", newPost })
+
+
+    } catch (error) {
+        return res.status(500).json({ error: `${error}` })
+    }
+}
