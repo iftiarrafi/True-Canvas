@@ -86,19 +86,10 @@ python app.py
 
 ---
 
-## 🎨 Design System
 
-TrueCanvas uses a specific artistic palette to ensure a soft and airy feel:
-- **Primary BG**: `#FDFCF0` (Cream)
-- **Secondary BG**: `#FFF5E1` (Soft Peach)
-- **Accent**: `#B4CDB0` (Sage Green)
-- **Text**: `#2D2D2D` (Charcoal)
-- **Typography**: *Playfair Display* (Headings) & *Inter* (Body)
 
 ---
 
-## 🤝 Contributing
-We welcome developers who believe in protecting human creativity. Feel free to open issues or submit pull requests.
 
 ---
 
