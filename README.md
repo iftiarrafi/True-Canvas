@@ -15,10 +15,9 @@
 
 ## 🎯 Key Features
 - **Vision Transformer (ViT) Gatekeeper**: We custom-trained a Vision Transformer model using PyTorch on a balanced dataset of Human vs. AI-generated art. Running on a dedicated Python server, this gatekeeper checks every artwork, strictly blocking any AI-generated uploads.
-- **Artist Autonomy**: Dedicated tools enabling creators to securely login, upload new pieces, update details, or delete their artworks at any time.
-- **Authentic User Feed**: A dynamic, premium masonry feed where general users can discover, browse, and engage purely with human-created posts.
+- **Secure Authentication & Media Delivery**: Rate-limiting to keep site safe from brute-force attack, features JWT authentication, secure HTTP-only cookies, bcrypt hashing, and automated Cloudinary integration for blazing-fast asset loads.
 - **Full MERN Stack + PyTorch Architecture**: Seamlessly integrates MongoDB, Express.js, React, Node.js alongside an advanced PyTorch deep learning backend.
-- **Secure Authentication & Media Delivery**: Features JWT authentication, secure HTTP-only cookies, bcrypt hashing, robust rate-limiting, and automated Cloudinary integration for blazing-fast asset loads.
+
 
 ## 🚀 Quick Start
 Get your local environment up and running in 3 simple steps:
