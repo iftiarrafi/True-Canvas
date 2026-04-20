@@ -18,6 +18,27 @@
 - **Secure Authentication & Media Delivery**: Rate-limiting to keep site safe from brute-force attack, features JWT authentication, secure HTTP-only cookies, bcrypt hashing, and automated Cloudinary integration for blazing-fast asset loads.
 - **Full MERN Stack + PyTorch Architecture**: Seamlessly integrates MongoDB, Express.js, React, Node.js alongside an advanced PyTorch deep learning backend.
 
+## 🛠️ Tech Stack & Libraries
+This project leverages a powerful combination of web and machine learning technologies:
+
+### Frontend (User Interface & State)
+- **React.js**: Dynamic and responsive UI rendering.
+- **Redux Toolkit**: Centralized state management for artists and posts.
+- **React Router DOM**: Seamless client-side navigation without page reloads.
+- **Axios**: Automated HTTP client for server communication.
+
+### Backend (Server & Database)
+- **Node.js & Express.js**: Fast, event-driven web framework for the core API architecture.
+- **MongoDB & Mongoose**: Flexible NoSQL database with strict schema validation.
+- **express-rate-limit**: Critical middleware installed to protect against brute-force attacks and DDOS by throttling repeated requests.
+- **jsonwebtoken & bcrypt**: Robust cryptographic security for passwords and stateless cookie session management.
+- **Cloudinary & multer**: Cloud-optimized media storage pipeline to handle memory-heavy image uploads directly on the server.
+- **Nodemailer**: Triggers automated email deliveries.
+
+### AI Gateway (Machine Learning)
+- **Python & Flask**: Dedicated, lightweight REST interface connecting the PyTorch model to the main node server backend.
+- **PyTorch**: Bleeding-edge deep learning framework used to train the model logic.
+- **Vision Transformer (ViT)**: The specific neural network architecture meticulously trained to classify human creativity vs AI.
 
 ## 🚀 Quick Start
 Get your local environment up and running in 3 simple steps:
