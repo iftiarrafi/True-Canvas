@@ -52,6 +52,7 @@ python ai_image_checker/app.py
 ## ⚙️ Configuration
 The application requires the following environment variables. Create a `.env` file in the `backend/` directory:
 
+<<<<<<< HEAD
 | Variable | Description | Example / Allowed Values |
 |----------|-------------|---------|
 | `PORT` | The port the backend server runs on | `3000` |
@@ -64,6 +65,14 @@ The application requires the following environment variables. Create a `.env` fi
 | `CLOUDINARY_API_SECRET`| Cloudinary REST API secret | `abc123xyz_456def` |
 | `EMAIL_USER` | Sender address for Nodemailer | `your@email.com` |
 | `EMAIL_PASS` | SMTP app-specific password | `abcd efgh ijkl mnop` |
+=======
+
+
+---
+
+
+---
+>>>>>>> 57a89cdb02e740fe3fc7f999aa11cc9281c76421
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
