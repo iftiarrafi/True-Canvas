@@ -1,5 +1,5 @@
 # TrueCanvas 🎨
-> **Pure Imagination. No Algorithms.** TrueCanvas is a dedicated sanctuary exclusively for human artists. Our core mission is to showcase ONLY human-drawn art and protect it from algorithmic noise. By identifying and blocking AI-generated uploads, we ensure that every piece of art in your feed is authentically human.
+> **Pure Imagination. No Algorithms.** Our core mission is to showcase ONLY human-drawn art and protect it from algorithmic noise. TrueCanvas is a dedicated sanctuary exclusively for human artists. By identifying and blocking AI-generated uploads, we ensure that every piece of art in your feed is authentically human.
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
