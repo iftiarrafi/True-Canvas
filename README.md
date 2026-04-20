@@ -1,110 +1,69 @@
 # TrueCanvas 🎨
+> **Pure Imagination. No Algorithms.** TrueCanvas is a dedicated sanctuary exclusively for human artists. Our core mission is to showcase ONLY human-drawn art and protect it from algorithmic noise. By identifying and blocking AI-generated uploads, we ensure that every piece of art in your feed is authentically human.
 
-> **Pure Imagination. No Algorithms.**  
-> TrueCanvas is a dedicated platform for human artists to share their original creations in a sanctuary protected from AI-generated content.
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
----
+> [!NOTE]
+> **Demo Overview**
+> 
+> *<!-- Visuals -->
+<div align="center">
+  <img src="./assests/home.png" alt="TrueCanvas Demo" width="400"/>
+</div>
 
-## ✨ Features
+## 🎯 Key Features
+- **Vision Transformer (ViT) Gatekeeper**: We custom-trained a Vision Transformer model using PyTorch on a balanced dataset of Human vs. AI-generated art. Running on a dedicated Python server, this gatekeeper checks every artwork, strictly blocking any AI-generated uploads.
+- **Artist Autonomy**: Dedicated tools enabling creators to securely login, upload new pieces, update details, or delete their artworks at any time.
+- **Authentic User Feed**: A dynamic, premium masonry feed where general users can discover, browse, and engage purely with human-created posts.
+- **Full MERN Stack + PyTorch Architecture**: Seamlessly integrates MongoDB, Express.js, React, Node.js alongside an advanced PyTorch deep learning backend.
+- **Secure Authentication & Media Delivery**: Features JWT authentication, secure HTTP-only cookies, bcrypt hashing, robust rate-limiting, and automated Cloudinary integration for blazing-fast asset loads.
 
-### 🖼️ Artistic Gallery
-Experience a curated, masonry-style gallery with a premium, light-themed aesthetic. Designed to let the artwork breathe and speak for itself.
+## 🚀 Quick Start
+Get your local environment up and running in 3 simple steps:
 
-### 🛡️ AI Content Verification
-Our proprietary AI detection system (built with Python & Flask) checks every upload. Only authentic, human-made art is accepted into the collective.
-
-### 👥 Creative Community
-- **Interactions**: Like and save your favorite masterpieces.
-- **Micro-blogging**: Engage with artists through our elegant commenting system.
-- **Connections**: Follow other visionaries and build your own creative network.
-
-### 👤 Artist Studios (Profiles)
-- **Identity**: Customize your artistic bio and avatar.
-- **Gallery**: showcased your personal collection in a dedicated portfolio view.
-
-### 🔍 SEO Optimized
-Every artwork and artist profile is optimized with dynamic metadata for maximum discoverability on search engines.
-
----
-
-## 🚀 Tech Stack
-
-### Frontend
-- **Framework**: React.js
-- **State Management**: Redux Toolkit (RTK)
-- **Styling**: Vanilla CSS (Artistic Design System)
-- **Routing**: React Router DOM
-
-### Backend
-- **Server**: Node.js & Express
-- **Database**: MongoDB (Mongoose ODM)
-- **Auth**: JWT & Cookies
-- **Storage**: Cloudinary Integration
-
-### AI Checker
-- **Language**: Python
-- **Framework**: Flask
-- **Purpose**: Image authenticity verification
-
----
-
-## 🛠️ Installation & Setup
-
-### 1. Clone the Repository
+**1. Clone & Install Dependencies**
 ```bash
 git clone https://github.com/iftiarrafi/TrueCanvas.git
 cd TrueCanvas
+npm install --prefix backend && npm install --prefix frontend
 ```
 
-### 2. Backend Setup
+**2. Configure Environment**
 ```bash
+# Add your environment variables in the backend directory
 cd backend
-npm install
-# Create a .env file with:
-# PORT=4000
-# MONGO_URI=your_mongodb_uri
-# JWT_SECRET=your_secret
-# CLOUDINARY_CLOUD_NAME=xxx
-# CLOUDINARY_API_KEY=xxx
-# CLOUDINARY_API_SECRET=xxx
-npm start
+touch .env
 ```
+*(Populate `.env` with the variables listed in the Configuration section below)*
 
-### 3. Frontend Setup
+**3. Launch the Application**
 ```bash
-cd ../frontend
-npm install
-npm start
+# Start backend, frontend, and AI checker (open 3 separate terminals)
+npm run dev --prefix backend
+npm start --prefix frontend
+python ai_image_checker/app.py 
 ```
 
-### 4. AI Checker Setup
-```bash
-cd ../ai_image_checker
-# Install Python dependencies (requirements.txt)
-python app.py
-```
+> [!TIP]
+> Ensure your MongoDB instance is running, Python is installed for the Flask server, and your Cloudinary credentials are valid before launching the development server.
 
----
+## ⚙️ Configuration
+The application requires the following environment variables. Create a `.env` file in the `backend/` directory:
 
-## 🎨 Design System
-
-TrueCanvas uses a specific artistic palette to ensure a soft and airy feel:
-- **Primary BG**: `#FDFCF0` (Cream)
-- **Secondary BG**: `#FFF5E1` (Soft Peach)
-- **Accent**: `#B4CDB0` (Sage Green)
-- **Text**: `#2D2D2D` (Charcoal)
-- **Typography**: *Playfair Display* (Headings) & *Inter* (Body)
-
----
-
-## 🤝 Contributing
-We welcome developers who believe in protecting human creativity. Feel free to open issues or submit pull requests.
-
----
+| Variable | Description | Example / Allowed Values |
+|----------|-------------|---------|
+| `PORT` | The port the backend server runs on | `3000` |
+| `MONGODB_URL` | MongoDB cluster connection URI | `mongodb+srv://...` |
+| `JWT_SECRET` | Secret key for robust JWT signing | `your_jwt_secret` |
+| `JWT_EXPIRES` | Expiration lifespan for Auth cookies | `1d` |
+| `salt` | Hashing complexity for bcrypt | `10` |
+| `CLOUDINARY_CLOUD_NAME`| Cloudinary remote cloud identifier | `your_cloud_name` |
+| `CLOUDINARY_API_KEY` | Cloudinary REST API key | `123456789012345` |
+| `CLOUDINARY_API_SECRET`| Cloudinary REST API secret | `abc123xyz_456def` |
+| `EMAIL_USER` | Sender address for Nodemailer | `your@email.com` |
+| `EMAIL_PASS` | SMTP app-specific password | `abcd efgh ijkl mnop` |
 
 ## 📄 License
-This project is licensed under the MIT License.
-
----
-
-*Made with ❤️ for the global artist community.*
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
