@@ -9,7 +9,7 @@
 > **Demo Overview**
 > 
 <div align="center">
-  <img src="./assests/truecanvas.gif" alt="TrueCanvas Demo" width="800"/>
+  <img src="./assests/trucanvas.gif" alt="TrueCanvas Demo" width="400"/>
 </div>
 
 ## 🎯 Key Features
