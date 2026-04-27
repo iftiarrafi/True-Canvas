@@ -8,7 +8,6 @@
 > [!NOTE]
 > **Demo Overview**
 > 
-> *<!-- Visuals -->
 <div align="center">
   <img src="./assests/intro.gif" alt="TrueCanvas Demo" width="400"/>
 </div>
