@@ -10,7 +10,7 @@
 > 
 > *<!-- Visuals -->
 <div align="center">
-  <img src="./assests/intro.gif" alt="TrueCanvas Demo" width="400"/>
+  <img src="./assests/trucanvas.gif" alt="TrueCanvas Demo" width="400"/>
 </div>
 
 ## 🎯 Key Features
