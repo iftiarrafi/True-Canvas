@@ -8,6 +8,10 @@ import postrouter from "./routes/PostRoutes.js";
 import commentRouter from "./routes/CommentRoutes.js";
 dotenv.config()
 
+// changing dns(recovering mongodb connection issue)
+import dns from 'dns'
+dns.setServers(["1.1.1.1", "8.8.8.8"])
+
 import { rateLimit } from 'express-rate-limit'
 
 const app = express()
@@ -47,7 +51,9 @@ app.use(limiter)
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/post", postrouter)
 app.use("/api/v1/comment", commentRouter)
-
+app.use("/", (req, res) => {
+    res.send("HEllo WORLD")
+})
 
 const PORT = 4000
 app.listen(PORT, () => {

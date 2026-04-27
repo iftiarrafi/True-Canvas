@@ -1,5 +1,5 @@
 # TrueCanvas 🎨
-> **Pure Imagination. No Algorithms.** TrueCanvas is a dedicated sanctuary exclusively for human artists. Our core mission is to showcase ONLY human-drawn art and protect it from algorithmic noise. By identifying and blocking AI-generated uploads, we ensure that every piece of art in your feed is authentically human.
+> **Pure Imagination. No Algorithms.** Our core mission is to showcase ONLY human-drawn art and protect it from algorithmic noise. TrueCanvas is a dedicated sanctuary exclusively for human artists. By identifying and blocking AI-generated uploads, we ensure that every piece of art in your feed is authentically human.
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
@@ -15,10 +15,30 @@
 
 ## 🎯 Key Features
 - **Vision Transformer (ViT) Gatekeeper**: We custom-trained a Vision Transformer model using PyTorch on a balanced dataset of Human vs. AI-generated art. Running on a dedicated Python server, this gatekeeper checks every artwork, strictly blocking any AI-generated uploads.
-- **Artist Autonomy**: Dedicated tools enabling creators to securely login, upload new pieces, update details, or delete their artworks at any time.
-- **Authentic User Feed**: A dynamic, premium masonry feed where general users can discover, browse, and engage purely with human-created posts.
+- **Secure Authentication & Media Delivery**: Rate-limiting to keep site safe from brute-force attack, features JWT authentication, secure HTTP-only cookies, bcrypt hashing, and automated Cloudinary integration for blazing-fast asset loads.
 - **Full MERN Stack + PyTorch Architecture**: Seamlessly integrates MongoDB, Express.js, React, Node.js alongside an advanced PyTorch deep learning backend.
-- **Secure Authentication & Media Delivery**: Features JWT authentication, secure HTTP-only cookies, bcrypt hashing, robust rate-limiting, and automated Cloudinary integration for blazing-fast asset loads.
+
+## 🛠️ Tech Stack & Libraries
+This project leverages a powerful combination of web and machine learning technologies:
+
+### Frontend (User Interface & State)
+- **React.js**: Dynamic and responsive UI rendering.
+- **Redux Toolkit**: Centralized state management for artists and posts.
+- **React Router DOM**: Seamless client-side navigation without page reloads.
+- **Axios**: Automated HTTP client for server communication.
+
+### Backend (Server & Database)
+- **Node.js & Express.js**: Fast, event-driven web framework for the core API architecture.
+- **MongoDB & Mongoose**: Flexible NoSQL database with strict schema validation.
+- **express-rate-limit**: Critical middleware installed to protect against brute-force attacks and DDOS by throttling repeated requests.
+- **jsonwebtoken & bcrypt**: Robust cryptographic security for passwords and stateless cookie session management.
+- **Cloudinary & multer**: Cloud-optimized media storage pipeline to handle memory-heavy image uploads directly on the server.
+- **Nodemailer**: Triggers automated email deliveries.
+
+### AI Gateway (Machine Learning)
+- **Python & Flask**: Dedicated, lightweight REST interface connecting the PyTorch model to the main node server backend.
+- **PyTorch**: Bleeding-edge deep learning framework used to train the model logic.
+- **Vision Transformer (ViT)**: The specific neural network architecture meticulously trained to classify human creativity vs AI.
 
 ## 🚀 Quick Start
 Get your local environment up and running in 3 simple steps:
@@ -52,7 +72,6 @@ python ai_image_checker/app.py
 ## ⚙️ Configuration
 The application requires the following environment variables. Create a `.env` file in the `backend/` directory:
 
-<<<<<<< HEAD
 | Variable | Description | Example / Allowed Values |
 |----------|-------------|---------|
 | `PORT` | The port the backend server runs on | `3000` |
@@ -65,14 +84,6 @@ The application requires the following environment variables. Create a `.env` fi
 | `CLOUDINARY_API_SECRET`| Cloudinary REST API secret | `abc123xyz_456def` |
 | `EMAIL_USER` | Sender address for Nodemailer | `your@email.com` |
 | `EMAIL_PASS` | SMTP app-specific password | `abcd efgh ijkl mnop` |
-=======
-
-
----
-
-
----
->>>>>>> 57a89cdb02e740fe3fc7f999aa11cc9281c76421
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

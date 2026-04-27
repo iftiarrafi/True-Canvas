@@ -23,7 +23,6 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// ✅ Thunk for update profile
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (formData, thunkAPI) => {
