@@ -10,7 +10,7 @@
 > 
 > *<!-- Visuals -->
 <div align="center">
-  <img src="./assests/home.png" alt="TrueCanvas Demo" width="400"/>
+  <img src="./assests/intro.gif" alt="TrueCanvas Demo" width="400"/>
 </div>
 
 ## 🎯 Key Features
@@ -87,3 +87,30 @@ The application requires the following environment variables. Create a `.env` fi
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🐳 Docker
+
+The backend can be containerized using Docker. Build the image and run the container with the following commands:
+
+```bash
+# Build the Docker image
+docker build -t truecanvas-backend ./backend
+
+# Run the container
+docker run -d -p 4000:4000 --name truecanvas-backend truecanvas-backend
+```
+
+Make sure to set the required environment variables when running the container, for example:
+
+```bash
+docker run -d -p 4000:4000 \
+  -e PORT=4000 \
+  -e MONGODB_URL=your_mongo_uri \
+  -e JWT_SECRET=your_jwt_secret \
+  -e CLOUDINARY_CLOUD_NAME=your_cloud_name \
+  -e CLOUDINARY_API_KEY=your_api_key \
+  -e CLOUDINARY_API_SECRET=your_api_secret \
+  --name truecanvas-backend truecanvas-backend
+```
+
+This will start the backend API in a Docker container, ready to be used alongside the frontend and AI checker services.
