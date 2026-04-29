@@ -14,7 +14,9 @@
 
 ## 🎯 Key Features
 - **Vision Transformer (ViT) Gatekeeper**: We custom-trained a Vision Transformer model using PyTorch on a balanced dataset of Human vs. AI-generated art. Running on a dedicated Python server, this gatekeeper checks every artwork, strictly blocking any AI-generated uploads.
+- **Redis-Cached Authentication**: User sessions are cached in Redis on login, eliminating redundant MongoDB queries on every authenticated request. Cache is automatically invalidated on logout and profile updates.
 - **Secure Authentication & Media Delivery**: Rate-limiting to keep site safe from brute-force attack, features JWT authentication, secure HTTP-only cookies, bcrypt hashing, and automated Cloudinary integration for blazing-fast asset loads.
+- **Docker Compose Orchestration**: Full containerized deployment with Docker Compose — Redis and backend services spin up with a single command, connected via health checks and shared networking.
 - **Full MERN Stack + PyTorch Architecture**: Seamlessly integrates MongoDB, Express.js, React, Node.js alongside an advanced PyTorch deep learning backend.
 
 ## 🛠️ Tech Stack & Libraries
@@ -29,10 +31,15 @@ This project leverages a powerful combination of web and machine learning techno
 ### Backend (Server & Database)
 - **Node.js & Express.js**: Fast, event-driven web framework for the core API architecture.
 - **MongoDB & Mongoose**: Flexible NoSQL database with strict schema validation.
+- **Redis**: In-memory data store used for caching authenticated user sessions, significantly reducing database load on repeated requests.
 - **express-rate-limit**: Critical middleware installed to protect against brute-force attacks and DDOS by throttling repeated requests.
 - **jsonwebtoken & bcrypt**: Robust cryptographic security for passwords and stateless cookie session management.
 - **Cloudinary & multer**: Cloud-optimized media storage pipeline to handle memory-heavy image uploads directly on the server.
 - **Nodemailer**: Triggers automated email deliveries.
+
+### Infrastructure & DevOps
+- **Docker**: Backend is containerized using a multi-stage `Dockerfile` with `node:20-alpine`.
+- **Docker Compose**: Orchestrates the backend API and Redis services with health checks, persistent volumes, and automatic restarts.
 
 ### AI Gateway (Machine Learning)
 - **Python & Flask**: Dedicated, lightweight REST interface connecting the PyTorch model to the main node server backend.
@@ -40,33 +47,101 @@ This project leverages a powerful combination of web and machine learning techno
 - **Vision Transformer (ViT)**: The specific neural network architecture meticulously trained to classify human creativity vs AI.
 
 ## 🚀 Quick Start
-Get your local environment up and running in 3 simple steps:
+Get your local environment up and running:
 
-**1. Clone & Install Dependencies**
+### Option 1 — Docker Compose (Recommended)
+Spin up the backend + Redis in one command:
+
+```bash
+git clone https://github.com/iftiarrafi/TrueCanvas.git
+cd TrueCanvas
+
+# Start backend + Redis containers
+docker-compose up --build -d
+
+# Start frontend (separate terminal)
+npm install --prefix frontend
+npm start --prefix frontend
+
+# Start AI checker (separate terminal)
+python ai_image_checker/app.py
+```
+
+> [!TIP]
+> `docker-compose up` automatically starts Redis and the backend. No need to install Redis locally.
+
+### Option 2 — Manual Setup
 ```bash
 git clone https://github.com/iftiarrafi/TrueCanvas.git
 cd TrueCanvas
 npm install --prefix backend && npm install --prefix frontend
 ```
 
-**2. Configure Environment**
-```bash
-# Add your environment variables in the backend directory
-cd backend
-touch .env
-```
-*(Populate `.env` with the variables listed in the Configuration section below)*
+Configure environment variables (see Configuration below), then:
 
-**3. Launch the Application**
 ```bash
-# Start backend, frontend, and AI checker (open 3 separate terminals)
+# Start backend, frontend, and AI checker (3 separate terminals)
 npm run dev --prefix backend
 npm start --prefix frontend
-python ai_image_checker/app.py 
+python ai_image_checker/app.py
 ```
 
-> [!TIP]
-> Ensure your MongoDB instance is running, Python is installed for the Flask server, and your Cloudinary credentials are valid before launching the development server.
+> [!IMPORTANT]
+> If running manually, you need a Redis instance running on `localhost:6379`. Install Redis locally or run `docker run -d -p 6379:6379 redis:7-alpine`.
+
+## ⚡ Redis Caching Strategy
+
+The backend uses Redis to cache authenticated user data, reducing MongoDB queries on every request:
+
+| Event | Action | Cache Key |
+|-------|--------|-----------|
+| **Login** | User data cached after successful password verification | `user:<id>` + `login:<email>` |
+| **Authenticated Request** | Auth middleware checks Redis before MongoDB | `user:<id>` |
+| **Logout** | Both cache keys invalidated | `user:<id>` + `login:<email>` |
+| **Profile Update** | Both cache keys invalidated to prevent stale data | `user:<id>` + `login:<email>` |
+
+- **TTL**: All cache entries expire after **24 hours** (matching JWT expiry).
+- **Graceful Fallback**: If Redis is unavailable, the app falls back to MongoDB automatically — no downtime.
+
+## 🐳 Docker
+
+### Docker Compose (Backend + Redis)
+
+The `docker-compose.yml` at the project root orchestrates two services:
+
+| Service | Image | Port | Purpose |
+|---------|-------|------|---------|
+| `redis` | `redis:7-alpine` | `6379` | In-memory cache for user sessions |
+| `backend` | Built from `./backend/Dockerfile` | `4000` | Node.js API server |
+
+```bash
+# Start all services
+docker-compose up --build -d
+
+# View logs
+docker logs truecanvas-backend
+docker logs truecanvas-redis
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes
+docker-compose down -v
+```
+
+### Standalone Backend Container
+If you prefer to manage Redis separately:
+
+```bash
+# Build the Docker image
+docker build -t truecanvas-backend ./backend
+
+# Run with environment variables
+docker run -d -p 4000:4000 \
+  --env-file ./backend/.env \
+  -e REDIS_URL=redis://your-redis-host:6379 \
+  --name truecanvas-backend truecanvas-backend
+```
 
 ## ⚙️ Configuration
 The application requires the following environment variables. Create a `.env` file in the `backend/` directory:
@@ -78,38 +153,15 @@ The application requires the following environment variables. Create a `.env` fi
 | `JWT_SECRET` | Secret key for robust JWT signing | `your_jwt_secret` |
 | `JWT_EXPIRES` | Expiration lifespan for Auth cookies | `1d` |
 | `salt` | Hashing complexity for bcrypt | `10` |
+| `REDIS_URL` | Redis connection URI | `redis://localhost:6379` |
 | `CLOUDINARY_CLOUD_NAME`| Cloudinary remote cloud identifier | `your_cloud_name` |
 | `CLOUDINARY_API_KEY` | Cloudinary REST API key | `123456789012345` |
 | `CLOUDINARY_API_SECRET`| Cloudinary REST API secret | `abc123xyz_456def` |
 | `EMAIL_USER` | Sender address for Nodemailer | `your@email.com` |
 | `EMAIL_PASS` | SMTP app-specific password | `abcd efgh ijkl mnop` |
 
+> [!NOTE]
+> When using Docker Compose, `REDIS_URL` is automatically set to `redis://redis:6379` (the container hostname). You don't need to set it manually.
+
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🐳 Docker
-
-The backend can be containerized using Docker. Build the image and run the container with the following commands:
-
-```bash
-# Build the Docker image
-docker build -t truecanvas-backend ./backend
-
-# Run the container
-docker run -d -p 4000:4000 --name truecanvas-backend truecanvas-backend
-```
-
-Make sure to set the required environment variables when running the container, for example:
-
-```bash
-docker run -d -p 4000:4000 \
-  -e PORT=4000 \
-  -e MONGODB_URL=your_mongo_uri \
-  -e JWT_SECRET=your_jwt_secret \
-  -e CLOUDINARY_CLOUD_NAME=your_cloud_name \
-  -e CLOUDINARY_API_KEY=your_api_key \
-  -e CLOUDINARY_API_SECRET=your_api_secret \
-  --name truecanvas-backend truecanvas-backend
-```
-
-This will start the backend API in a Docker container, ready to be used alongside the frontend and AI checker services.

@@ -8,16 +8,32 @@ import axios from "axios"
 axios.defaults.withCredentials = true
 import dotenv from "dotenv"
 dotenv.config()
+import redisClient from "../utils/redis.js"
 /**** Auth *****/
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.statsu(400).json({ message: "every field must be provided.." })
+            return res.status(400).json({ message: "every field must be provided.." })
 
         }
 
-        const user = await userModel.findOne({ email });
+        // Try Redis cache first (keyed by email for login lookups)
+        let user = null;
+        try {
+            const cachedUser = await redisClient.get(`login:${email}`);
+            if (cachedUser) {
+                user = JSON.parse(cachedUser);
+                console.log(`⚡ Login: found user in Redis cache for ${email}`);
+            }
+        } catch (cacheErr) {
+            console.error('Redis cache read failed during login:', cacheErr.message);
+        }
+
+        // Cache miss — query MongoDB
+        if (!user) {
+            user = await userModel.findOne({ email });
+        }
 
         if (!user) {
             return res.status(404).json({ message: "No user with such email is registered!" });
@@ -34,6 +50,15 @@ const login = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, secret, { expiresIn: "1d" });
 
+        // Cache user data in Redis (TTL: 1 day = 86400 seconds)
+        try {
+            const userData = JSON.stringify(user);
+            await redisClient.set(`user:${user._id}`, userData, { EX: 86400 });
+            await redisClient.set(`login:${email}`, userData, { EX: 86400 });
+            console.log(`✅ Cached user:${user._id} in Redis (by id + email)`);
+        } catch (cacheErr) {
+            console.error('Redis cache write failed:', cacheErr.message);
+        }
 
         const options = {
             expires: new Date(
@@ -96,6 +121,15 @@ export const register = async (req, res) => {
 }
 export const logout = async (req, res) => {
     try {
+        // Invalidate user cache in Redis on logout
+        try {
+            await redisClient.del(`user:${req.user._id}`);
+            await redisClient.del(`login:${req.user.email}`);
+            console.log(`🗑️ Removed user:${req.user._id} from Redis cache`);
+        } catch (cacheErr) {
+            console.error('Redis cache delete failed:', cacheErr.message);
+        }
+
         return res.clearCookie("token", {
             httpOnly: true,
         }).json({ message: "Logged out successfully" })
@@ -225,6 +259,16 @@ export const updateProfile = async (req, res) => {
         user.location = location
 
         await user.save()
+
+        // Invalidate cached user data after profile update
+        try {
+            await redisClient.del(`user:${req.user._id}`);
+            await redisClient.del(`login:${req.user.email}`);
+            console.log(`🗑️ Invalidated cache for user:${req.user._id} after profile update`);
+        } catch (cacheErr) {
+            console.error('Redis cache invalidation failed:', cacheErr.message);
+        }
+
         return res.status(201).json({ message: "updated", user })
 
     } catch (error) {
