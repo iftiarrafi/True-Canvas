@@ -163,5 +163,4 @@ The application requires the following environment variables. Create a `.env` fi
 > [!NOTE]
 > When using Docker Compose, `REDIS_URL` is automatically set to `redis://redis:6379` (the container hostname). You don't need to set it manually.
 
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
