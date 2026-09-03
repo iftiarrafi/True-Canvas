@@ -12,7 +12,7 @@ const isAuthenticated = async (req, res, next) => {
 
         const decodedUser = jwt.verify(token, process.env.JWT_SECRET)
 
-        // Try Redis cache first
+        //  Redis cache first
         try {
             const cachedUser = await redisClient.get(`user:${decodedUser.id}`);
             if (cachedUser) {
@@ -24,13 +24,13 @@ const isAuthenticated = async (req, res, next) => {
             console.error('Redis cache read failed, falling back to MongoDB:', cacheErr.message);
         }
 
-        // Cache miss — query MongoDB and populate cache
+        //  query MongoDB and populate cache
         const user = await userModel.findById(decodedUser.id);
         req.user = user;
 
         try {
             await redisClient.set(`user:${decodedUser.id}`, JSON.stringify(user), { EX: 86400 });
-            console.log(`📦 Auth: cached user:${decodedUser.id} in Redis (cache miss)`);
+            console.log(`Auth: cached user:${decodedUser.id} in Redis (cache miss)`);
         } catch (cacheErr) {
             console.error('Redis cache write failed:', cacheErr.message);
         }
