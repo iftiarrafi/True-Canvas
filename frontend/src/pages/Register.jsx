@@ -7,7 +7,7 @@ import "../CSS/Login.css";
 const Register = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, error, token } = useSelector((state) => state.auth);
+    const { loading, error, user } = useSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
         username: "",
@@ -20,10 +20,10 @@ const Register = () => {
 
     useEffect(() => {
         document.title = "Register | TrueCanvas";
-        if (token) {
+        if (user) {
             navigate("/private/posts");
         }
-    }, [token, navigate]);
+    }, [user, navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

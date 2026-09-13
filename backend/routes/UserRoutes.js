@@ -1,5 +1,5 @@
 import express from "express"
-import login, { follow, logout, register, resetPassword, searchUser, sendOTP, showmyprofile, updateProfile, verifyOTP, visitprofile } from "../controller/UserController.js"
+import login, { confirmPasswordReset, follow, logout, register, requestPasswordReset, resetPassword, searchUser, sendOTP, showmyprofile, updateProfile, verifyOTP, verifyPasswordReset, visitprofile } from "../controller/UserController.js"
 import isAuthenticated from "../auth/Auth.js"
 import { upload } from "../utils/multer.js"
 
@@ -8,6 +8,9 @@ const userRouter = express.Router()
 /**Auth**/
 userRouter.post("/login", login)
 userRouter.post("/register", register)
+userRouter.post("/password-reset/request", requestPasswordReset)
+userRouter.post("/password-reset/verify", verifyPasswordReset)
+userRouter.post("/password-reset/confirm", confirmPasswordReset)
 userRouter.post("/logout", isAuthenticated, logout)
 
 /***reset password***/

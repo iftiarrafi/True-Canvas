@@ -1,6 +1,7 @@
 // src/redux/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_URL } from "../api";
 
 // ✅ Thunk for login
 export const loginUser = createAsyncThunk(
@@ -8,27 +9,34 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/v1/user/login",
+        `${API_URL}/user/login`,
         { email, password },
         { withCredentials: true }
       );
 
-      const { token, user } = response.data;
-      localStorage.setItem("token", token);
+      const { user } = response.data;
       localStorage.setItem("user", JSON.stringify(user));
-      return { token, user };
+      return { user };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
 );
 
+export const logoutUser = createAsyncThunk("auth/logoutUser", async (_, thunkAPI) => {
+  try {
+    await axios.post(`${API_URL}/user/logout`, {}, { withCredentials: true });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || "Logout failed");
+  }
+});
+
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (formData, thunkAPI) => {
     try {
       const response = await axios.patch(
-        "http://localhost:4000/api/v1/user/update-profile",
+        `${API_URL}/user/update-profile`,
         formData,
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -46,7 +54,7 @@ export const followUser = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const response = await axios.patch(
-        `http://localhost:4000/api/v1/user/follow-user/${userId}`,
+        `${API_URL}/user/follow-user/${userId}`,
         {},
         { withCredentials: true }
       );
@@ -63,7 +71,7 @@ export const registerUser = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/v1/user/register",
+        `${API_URL}/user/register`,
         userData
       );
       return response.data;
@@ -77,16 +85,13 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: JSON.parse(localStorage.getItem("user")) || null,
-    token: localStorage.getItem("token") || null,
     loading: false,
     error: null,
   },
   reducers: {
     logout: (state) => {
-      localStorage.removeItem("token");
       localStorage.removeItem("user");
       state.user = null;
-      state.token = null;
       state.error = null;
     },
   },
@@ -99,7 +104,11 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.token = action.payload.token;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        localStorage.removeItem("user");
+        state.user = null;
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

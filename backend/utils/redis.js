@@ -14,7 +14,10 @@ redisClient.on('error', (err) => {
     console.error('❌ Redis connection error:', err.message);
 });
 
-// Connect immediately
-await redisClient.connect();
+// Redis is an optional cache. Do not prevent the API from starting when it is
+// unavailable; callers already fall back to MongoDB.
+redisClient.connect().catch((err) => {
+    console.error('❌ Redis unavailable; continuing without cache:', err.message);
+});
 
 export default redisClient;

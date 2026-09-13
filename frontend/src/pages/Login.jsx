@@ -7,17 +7,17 @@ import "../CSS/Login.css";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, token } = useSelector((state) => state.auth);
+  const { loading, error, user } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
     document.title = "Login | TrueCanvas";
-    if (token) {
+    if (user) {
       navigate("/private/posts");
     }
-  }, [token, navigate]);
+  }, [user, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -1,6 +1,7 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios' 
+import { API_URL } from "../api";
 axios.defaults.withCredentials = true
 
 
@@ -8,7 +9,7 @@ export const fetchAllPosts = createAsyncThunk(
   "posts/fetchAll",
   async ({ search = "", page = 1, limit = 9 }, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/v1/post/posts`, {
+      const response = await axios.get(`${API_URL}/post/posts`, {
         params: { search, page, limit },
       });
       return response.data;

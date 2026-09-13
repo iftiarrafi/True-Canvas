@@ -1,5 +1,6 @@
 import postModel from "../models/Postmodel.js"
 import userModel from "../models/Usermodel.js"
+import commentModel from "../models/Commentmodel.js"
 import cloudinary from "../utils/cloudinary.js"
 import fs, { rmSync } from 'fs'
 import FormData from 'form-data'
@@ -118,7 +119,7 @@ export const createpost = async (req, res) => {
         };
 
 
-        const aiCheckResponse = await axios.post('http://localhost:5000/check_image', form, {
+        const aiCheckResponse = await axios.post(process.env.AI_CHECKER_URL || 'http://localhost:5000/check_image', form, {
             headers,
             maxContentLength: Infinity,
             maxBodyLength: Infinity,
@@ -173,6 +174,7 @@ export const updatepost = async (req, res) => {
         const userId = req.user._id
 
         const post = await postModel.findById(postId)
+        if (!post) return res.status(404).json({ message: "Post not found" });
 
         if (post.author_id.toString() === userId.toString()) {
             if (title) {
@@ -194,6 +196,11 @@ export const deletepost = async (req, res) => {
 
         const { postId } = req.params
         const userId = req.user._id
+        const post = await postModel.findById(postId);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+        if (post.author_id.toString() !== userId.toString()) {
+            return res.status(403).json({ message: "Unauthorized access!" });
+        }
 
         await userModel.findByIdAndUpdate(userId, {
             $pull: { posts: postId }
@@ -202,6 +209,11 @@ export const deletepost = async (req, res) => {
         })
 
         await postModel.findByIdAndDelete(postId)
+        await commentModel.deleteMany({ postId });
+        if (post.cloudinary_id && post.cloudinary_id !== "cld_url") {
+            await cloudinary.uploader.destroy(post.cloudinary_id);
+        }
+        await userModel.updateMany({}, { $pull: { saved_posts: postId } });
 
         return res.status(200).json({ message: "Post has been deleted!" })
 
@@ -218,6 +230,8 @@ export const save_post = async (req, res) => {
         const { postId } = req.params
         const userId = req.user._id
         const user = await userModel.findById(userId)
+        const post = await postModel.findById(postId);
+        if (!user || !post) return res.status(404).json({ message: "Post not found" });
 
         if (user.saved_posts.includes(postId)) {
             await userModel.findByIdAndUpdate(userId, {
@@ -243,6 +257,7 @@ export const likePost = async (req, res) => {
 
         const { postId } = req.params
         const post = await postModel.findById(postId)
+        if (!post) return res.status(404).json({ message: "Post not found" });
 
         const userId = req.user._id
 

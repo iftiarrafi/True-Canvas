@@ -12,11 +12,13 @@ const isAuthenticated = async (req, res, next) => {
 
         const decodedUser = jwt.verify(token, process.env.JWT_SECRET)
 
-        //  Redis cache first
+        // Redis cache first
         try {
             const cachedUser = await redisClient.get(`user:${decodedUser.id}`);
             if (cachedUser) {
                 req.user = JSON.parse(cachedUser);
+                delete req.user.password;
+                delete req.user.otp;
                 console.log(`⚡ Auth: served user:${decodedUser.id} from Redis cache`);
                 return next();
             }
@@ -24,8 +26,11 @@ const isAuthenticated = async (req, res, next) => {
             console.error('Redis cache read failed, falling back to MongoDB:', cacheErr.message);
         }
 
-        //  query MongoDB and populate cache
-        const user = await userModel.findById(decodedUser.id);
+        // Cache miss — query MongoDB and populate cache
+        const user = await userModel.findById(decodedUser.id).select("-password -otp");
+        if (!user) {
+            return res.status(401).json({ message: "Session is no longer valid" });
+        }
         req.user = user;
 
         try {
@@ -37,7 +42,10 @@ const isAuthenticated = async (req, res, next) => {
 
         next()
     } catch (error) {
-        return res.status(500).json({ message: `Error : ${error}` })
+        if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Session is invalid or expired" });
+        }
+        return res.status(500).json({ message: "Unable to authenticate request" })
     }
 }
 export default isAuthenticated

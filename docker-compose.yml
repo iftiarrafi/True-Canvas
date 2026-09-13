@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   redis:
     image: redis:7-alpine
@@ -26,9 +24,22 @@ services:
       - ./backend/.env
     environment:
       - REDIS_URL=redis://redis:6379
+      - AI_CHECKER_URL=http://ai-image-checker:5000/check_image
+      - PORT=4000
     depends_on:
       redis:
         condition: service_healthy
+      ai-image-checker:
+        condition: service_started
+    restart: unless-stopped
+
+  ai-image-checker:
+    build:
+      context: ./ai_image_checker
+      dockerfile: Dockerfile
+    container_name: truecanvas-ai-image-checker
+    expose:
+      - "5000"
     restart: unless-stopped
 
 volumes:

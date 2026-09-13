@@ -1,13 +1,14 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_URL } from "../api";
 axios.defaults.withCredentials = true
 
 export const createPost = createAsyncThunk(
   "post/createPost",
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post("http://localhost:4000/api/v1/post/create-post", formData, {
+      const response = await axios.post(`${API_URL}/post/create-post`, formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -26,8 +27,8 @@ export const likePost = createAsyncThunk(
   "post/likePost",
   async (postId, thunkAPI) => {
     try {
-      const response = await axios.patch(`http://localhost:4000/api/v1/post/like-a-post/${postId}`);
-      return { postId, likes: response.data.likes };
+      const response = await axios.patch(`${API_URL}/post/like-a-post/${postId}`);
+      return { postId, likes: response.data.total_like };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || "Action failed");
     }
@@ -38,7 +39,7 @@ export const savePost = createAsyncThunk(
   "post/savePost",
   async (postId, thunkAPI) => {
     try {
-      const response = await axios.patch(`http://localhost:4000/api/v1/post/save-post/${postId}`);
+      const response = await axios.patch(`${API_URL}/post/save-post/${postId}`);
       return { postId, status: response.data.message };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || "Action failed");
@@ -50,7 +51,7 @@ export const fetchSinglePost = createAsyncThunk(
   "post/fetchSingle",
   async (postId, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/v1/post/${postId}`);
+      const response = await axios.get(`${API_URL}/post/${postId}`);
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || "Fetch failed");
@@ -62,7 +63,7 @@ export const addComment = createAsyncThunk(
   "post/addComment",
   async ({ postId, comment }, thunkAPI) => {
     try {
-      const response = await axios.post(`http://localhost:4000/api/v1/comment/add-comment/${postId}`, { comment });
+      const response = await axios.post(`${API_URL}/comment/add-comment/${postId}`, { comment });
       return response.data.comment;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || "Comment failed");
@@ -74,7 +75,7 @@ export const fetchComments = createAsyncThunk(
   "post/fetchComments",
   async (postId, thunkAPI) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/v1/comment/get-comments/${postId}`);
+      const response = await axios.get(`${API_URL}/comment/get-comments/${postId}`);
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || "Fetch failed");
@@ -86,7 +87,7 @@ export const fetchMyPosts = createAsyncThunk(
   "post/fetchMyPosts",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("http://localhost:4000/api/v1/post/my-posts", {
+      const response = await axios.get(`${API_URL}/post/my-posts`, {
         withCredentials: true,
       });
       return response.data;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/AuthSlice.jsx";
+import { logout, logoutUser } from "../redux/AuthSlice.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import "../CSS/Navbar.css";
 
@@ -12,7 +12,8 @@ const Navbar = () => {
   // State to toggle menu open/close
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
     dispatch(logout());
     navigate("/");
     setMenuOpen(false); // close menu on logout
