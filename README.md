@@ -1,15 +1,16 @@
 # TrueCanvas 🎨
 > **Pure Imagination. No Algorithms.** Our core mission is to showcase ONLY human-drawn art and protect it from algorithmic noise. TrueCanvas is a dedicated sanctuary exclusively for human artists. By identifying and blocking AI-generated uploads, we ensure that every piece of art in your feed is authentically human.
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+<!-- Visuals -->
 
-> [!NOTE]
-> **Demo Overview**
-> 
+🎥 Project Demo
+
 <div align="center">
-  <img src="./assests/intro.gif" alt=" Loading.. TrueCanvas Demo" width="400"/>
+
+<a href="https://youtu.be/yKUEOZPR2UE"> <img src="https://img.youtube.com/vi/yKUEOZPR2UE/maxresdefault.jpg" alt="True-Canvas Demo" width="800" /> </a>
+
+<p> <strong>▶️ Click the image above to watch the full demo</strong> </p>
+
 </div>
 
 ## 🎯 Key Features
